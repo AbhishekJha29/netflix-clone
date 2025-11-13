@@ -1,5 +1,6 @@
 import { User } from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const Login = async(req,res) =>{
     try {
@@ -26,6 +27,8 @@ export const Login = async(req,res) =>{
               success:false
                });
            }
+
+           const token = await jwtsign("token", "dfgersvacnfgbecsd",{expiresIn:"1d"})
 
     } catch (error) {
         

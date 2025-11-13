@@ -20,7 +20,7 @@ export const Login = async(req,res) =>{
              }); 
            }
 
-           const isMatch = await bcryptjs.compare(password, user.password);
+           const isMatch = bcryptjs.compare(password, user.password);
            if (!isMatch) {
                return res.status(401).json({
                 message:"Invalid email or password",
@@ -28,11 +28,24 @@ export const Login = async(req,res) =>{
                });
            }
 
-           const token = await jwtsign("token", "dfgersvacnfgbecsd",{expiresIn:"1d"})
-
+           const tokenData = {
+            id:user._id
+           }
+           const token = jwt.sign(tokenData, "dfgersvacnfgbecsd",{expiresIn:"1d"});
+           return res.status(200).cookie("token", token, {httpOnly:true}).json({
+            message:`Welcome back ${user.fullName}`,
+            success:true
+           });
     } catch (error) {
-        
+        console.log(error);
     }
+}
+
+export const Logout = async (req, res) => {
+    return res.status(200).cookie("token", "", {expiresIn:new Date(Date.now()), httpOnly:true}).json({
+        message:"User Logged out SuccessFully",
+        success:true 
+    });
 }
 
 export const Register = async(req,res) => {

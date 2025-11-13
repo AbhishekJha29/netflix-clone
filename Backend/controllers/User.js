@@ -1,6 +1,38 @@
-import { User } from "../models/userModel"
+import { User } from "../models/userModel.js";
+import bcryptjs from "bcryptjs";
 
-const Register = async(req,res) => {
+export const Login = async(req,res) =>{
+    try {
+        const {email,password} = req.body;
+           if (!email || !password) {
+              return res.status(401).json({
+              message:"Invalid Data",
+              success:false
+            })  
+           };
+
+           const user = await User.findOne({email});
+           if (!user) {
+               return res.status(401).json({
+              message:"Invalid email or password",
+              success:false
+             }); 
+           }
+
+           const isMatch = await bcryptjs.compare(password, user.password);
+           if (!isMatch) {
+               return res.status(401).json({
+                message:"Invalid email or password",
+              success:false
+               });
+           }
+
+    } catch (error) {
+        
+    }
+}
+
+export const Register = async(req,res) => {
     try{
         const{fullName,email,password} = req.body;
         if(!fullName || !email || !password){
@@ -17,10 +49,12 @@ const Register = async(req,res) => {
             })
          }
 
+         const hashedPassword = await bcryptjs.hash(password,16);
+
          await User.create({
             fullName,
             email,
-            password
+            password:hashedPassword
          });
 
          return res.status(201).json({

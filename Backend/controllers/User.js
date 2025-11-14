@@ -20,7 +20,7 @@ export const Login = async(req,res) =>{
              }); 
            }
 
-           const isMatch = bcryptjs.compare(password, user.password);
+           const isMatch = await  bcryptjs.compare(password, user.password);
            if (!isMatch) {
                return res.status(401).json({
                 message:"Invalid email or password",
@@ -48,14 +48,14 @@ export const Logout = async (req, res) => {
     });
 }
 
-export const Register = async(req,res) => {
+export const Register = async (req,res) => {
     try{
         const{fullName,email,password} = req.body;
         if(!fullName || !email || !password){
             return res.status(401).json({
                 message:"Invalid data",
                 success:false 
-            })
+            });
         }
          const user = await User.findOne({email});
          if (user) {
@@ -79,5 +79,9 @@ export const Register = async(req,res) => {
 
     }catch(error){
         console.log(error);
+        return res.status(500).json({
+            message: "Server error",
+            success: false
+        });
     }
 }

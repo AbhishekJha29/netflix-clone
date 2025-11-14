@@ -34,6 +34,7 @@ export const Login = async(req,res) =>{
            const token = jwt.sign(tokenData, "dfgersvacnfgbecsd",{expiresIn:"1d"});
            return res.status(200).cookie("token", token, {httpOnly:true}).json({
             message:`Welcome back ${user.fullName}`,
+            user,
             success:true
            });
     } catch (error) {
@@ -74,7 +75,8 @@ export const Register = async (req,res) => {
          });
 
          return res.status(201).json({
-            message:"Account created Successfully"
+            message:"Account created Successfully",
+            success:true,
          })
 
     }catch(error){
